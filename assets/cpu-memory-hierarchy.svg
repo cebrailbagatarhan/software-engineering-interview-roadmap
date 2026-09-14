@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+  <title id="title">CPU and Memory Hierarchy</title>
+  <desc id="desc">A conceptual diagram showing CPU registers, caches, RAM and storage with decreasing speed and increasing capacity.</desc>
+  <rect width="1000" height="620" fill="#ffffff"/>
+  <text x="500" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700">CPU &amp; Memory Hierarchy</text>
+  <text x="500" y="82" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Yukarı çıktıkça daha hızlı / pahalı / küçük — aşağı indikçe daha yavaş / ucuz / büyük</text>
+
+  <rect x="350" y="115" width="300" height="70" rx="12" fill="#f2f2f2" stroke="#222" stroke-width="2"/>
+  <text x="500" y="145" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">Registers</text>
+  <text x="500" y="170" text-anchor="middle" font-family="Arial" font-size="15">CPU çekirdeğinin en yakın çalışma alanı</text>
+
+  <rect x="300" y="205" width="400" height="80" rx="12" fill="#f7f7f7" stroke="#222" stroke-width="2"/>
+  <text x="500" y="238" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">L1 / L2 / L3 Cache</text>
+  <text x="500" y="264" text-anchor="middle" font-family="Arial" font-size="15">Sık erişilen instruction ve data için düşük gecikmeli katman</text>
+
+  <rect x="240" y="305" width="520" height="90" rx="12" fill="#fafafa" stroke="#222" stroke-width="2"/>
+  <text x="500" y="342" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">RAM</text>
+  <text x="500" y="370" text-anchor="middle" font-family="Arial" font-size="15">Process heap/stack, page cache, aktif program verileri</text>
+
+  <rect x="170" y="420" width="660" height="100" rx="12" fill="#fcfcfc" stroke="#222" stroke-width="2"/>
+  <text x="500" y="460" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">SSD / Persistent Storage</text>
+  <text x="500" y="490" text-anchor="middle" font-family="Arial" font-size="15">Kalıcı veri; RAM'e göre daha yüksek erişim gecikmesi</text>
+
+  <line x1="115" y1="130" x2="115" y2="500" stroke="#222" stroke-width="2"/>
+  <polygon points="115,115 107,135 123,135" fill="#222"/>
+  <text x="95" y="310" transform="rotate(-90 95 310)" text-anchor="middle" font-family="Arial" font-size="16">Hız / yakınlık artar</text>
+
+  <line x1="885" y1="130" x2="885" y2="500" stroke="#222" stroke-width="2"/>
+  <polygon points="885,515 877,495 893,495" fill="#222"/>
+  <text x="905" y="310" transform="rotate(90 905 310)" text-anchor="middle" font-family="Arial" font-size="16">Kapasite artar</text>
+
+  <text x="500" y="570" text-anchor="middle" font-family="Arial" font-size="14">Özgün eğitim diyagramı — kavramsal ölçektir, gerçek latency değerleri CPU/nesil/iş yüküne göre değişir.</text>
+</svg>
