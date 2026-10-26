@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 BANK = Path(__file__).resolve().parent / "questions/high-yield/01-foundations-networking-backend.md"
-QUESTION = re.compile(r"(?m)^###\\s+(\\d+)\\.\\s+(.+?)\\s*$")
+QUESTION = re.compile(r"(?m)^###\s+(\d+)\.\s+(.+?)\s*$")
 
 
 def load_questions(path: Path = BANK) -> list[tuple[int, str, str]]:
@@ -17,7 +17,7 @@ def load_questions(path: Path = BANK) -> list[tuple[int, str, str]]:
     for index, match in enumerate(matches):
         end = matches[index + 1].start() if index + 1 < len(matches) else len(source)
         notes = source[match.end():end]
-        notes = re.split(r"(?m)^(?:---|#{1,3}\\s)", notes, maxsplit=1)[0].strip()
+        notes = re.split(r"(?m)^(?:---|#{1,3}\s)", notes, maxsplit=1)[0].strip()
         questions.append((int(match.group(1)), match.group(2).strip(), notes))
     return questions
 
@@ -39,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError) as error:
         parser.error(str(error))
     for number, title, notes in questions:
-        print(f"\\n{number}. {title}")
+        print(f"\n{number}. {title}")
         if args.show_notes and notes:
             print(notes)
     return 0
