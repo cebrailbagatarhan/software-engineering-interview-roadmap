@@ -1,0 +1,26 @@
+name: Daily archive audit
+
+on:
+  pull_request:
+    paths:
+      - 'archive_audit.py'
+      - 'test_archive_audit.py'
+      - '.github/workflows/archive-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest -v test_archive_audit.py
+      - name: Compile
+        run: python -m py_compile archive_audit.py test_archive_audit.py
+      - name: Audit checked-in daily archive
+        run: python archive_audit.py --json
