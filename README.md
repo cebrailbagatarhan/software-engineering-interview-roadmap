@@ -180,3 +180,16 @@ Her bölüm mümkün olduğunca şu şablonu izler:
 ## Lisans / katkı
 
 Bu repo eğitim amaçlı özgün notlardan oluşur. Harici kaynaklardan uzun metinler kopyalanmaz; kaynaklar bağlantı ile gösterilir. Görseller mümkün olduğunca özgün diyagram olarak üretilir veya resmi kaynağa bağlantı verilir.
+
+## Rastgele mülakat pratiği (offline)
+
+Ek paket veya internet bağlantısı gerektirmeden mevcut 40 soruluk bankadan rastgele sorular seçebilirsin:
+
+```bash
+python practice.py                 # 5 soru, ipuçları gizli
+python practice.py --count 3 --seed 42  # aynı soruları tekrar üret
+python practice.py --count 3 --show-notes  # beklenen cevap ve ipuçlarını göster
+python -m unittest -v test_practice.py
+```
+
+Sorular `questions/high-yield/01-foundations-networking-backend.md` dosyasından okunur. `--count` 1–40 arasında olmalıdır. Eğitim notları varsayılan olarak gizlidir; `--show-notes` ile açılır.
