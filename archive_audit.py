@@ -40,11 +40,15 @@ def audit(root):
             content = note.read_text(encoding="utf-8")
             ids = [int(number) for number in PACKAGE.findall(content)]
             packages += len(ids)
-            if sorted(ids) != [1, 2]:
-                problems.append({"path": rel, "code": "expected_two_numbered_packages"})
+            # The archive contains both two- and three-package notes.
+            # Require numbering to start at 1 and contain no gaps or duplicates.
+            if not ids or sorted(ids) != list(range(1, len(ids) + 1)):
+                problems.append({"path": rel, "code": "nonsequential_package_numbers"})
             hour = note.name[:2]
-            header = f"# {day_dir.name} {hour}:00"
-            if not content.lstrip().startswith(header):
+            first_line = content.lstrip().splitlines()[0] if content.strip() else ""
+            # Early notes used a time-only heading; newer ones include the date.
+            if not (first_line.startswith(f"# {day_dir.name} {hour}:00")
+                    or first_line.startswith(f"# {hour}:00")):
                 problems.append({"path": rel, "code": "header_date_time_mismatch"})
     return {"days": days, "notes": files, "packages": packages,
             "problems": problems, "ok": not problems}
