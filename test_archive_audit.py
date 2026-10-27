@@ -24,13 +24,22 @@ class ArchiveAuditTests(unittest.TestCase):
         self.assertTrue(report["ok"])
         self.assertEqual((report["days"], report["notes"], report["packages"]), (1, 1, 2))
 
-    def test_missing_package(self):
-        self.note.write_text("# 2026-09-23 11:00\n## Paket 1 — First\n", encoding="utf-8")
-        self.assertEqual(audit(self.root)["problems"][0]["code"], "expected_two_numbered_packages")
+    def test_missing_package_headings(self):
+        self.note.write_text("# 2026-09-23 11:00\nNo packages\n", encoding="utf-8")
+        self.assertEqual(audit(self.root)["problems"][0]["code"], "nonsequential_package_numbers")
 
     def test_duplicate_number(self):
         self.note.write_text("# 2026-09-23 11:00\n## Paket 1 — First\n## Paket 1 — Second\n", encoding="utf-8")
         self.assertFalse(audit(self.root)["ok"])
+
+    def test_gap_in_numbering(self):
+        self.note.write_text("# 2026-09-23 11:00\n## Paket 1 — First\n## Paket 3 — Third\n", encoding="utf-8")
+        self.assertFalse(audit(self.root)["ok"])
+
+    def test_legacy_three_packages_and_time_only_heading(self):
+        self.note.write_text("# 11:00 — Study\n## Paket 1 — First\n## Paket 2 — Second\n"
+                             "## Paket 3 — Third\n", encoding="utf-8")
+        self.assertTrue(audit(self.root)["ok"])
 
     def test_header_mismatch(self):
         self.note.write_text("# 2026-09-23 10:00\n## Paket 1 — First\n## Paket 2 — Second\n", encoding="utf-8")
