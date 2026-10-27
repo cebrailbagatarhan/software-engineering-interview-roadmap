@@ -1,0 +1,23 @@
+name: Study archive search tests
+on:
+  push:
+    paths:
+      - 'search_study.py'
+      - 'test_search_study.py'
+      - '.github/workflows/study-search-tests.yml'
+  pull_request:
+    paths:
+      - 'search_study.py'
+      - 'test_search_study.py'
+      - '.github/workflows/study-search-tests.yml'
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest -v test_search_study.py
+      - run: python -m py_compile search_study.py test_search_study.py
+      - run: python -c "from search_study import ROOT, search_packages; assert search_packages(ROOT, 'ext4', full_text=True)"
