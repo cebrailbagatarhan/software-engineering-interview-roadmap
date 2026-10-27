@@ -1,0 +1,22 @@
+name: Study summary checks
+
+on:
+  push:
+    branches: [feat/study-workload-summary-20261027]
+  pull_request:
+    paths:
+      - 'study_summary.py'
+      - 'test_study_summary.py'
+      - '.github/workflows/study-summary-checks.yml'
+
+jobs:
+  summary-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest -v test_study_summary.py
+      - run: python -m py_compile study_summary.py test_study_summary.py
+      - run: python study_summary.py --json
