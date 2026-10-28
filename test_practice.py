@@ -48,7 +48,7 @@ class PracticeTests(unittest.TestCase):
             self.assertEqual(main(args), 0)
         first = output.getvalue()
         for number in (1, 2, 3):
-            self.assertNotIn(f"\\n{number}. ", first)
+            self.assertNotIn(f"\n{number}. ", first)
         self.assertEqual(len([line for line in first.splitlines() if line.strip()]), 37)
         with contextlib.redirect_stdout(io.StringIO()) as repeated:
             main(args)
