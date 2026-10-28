@@ -189,6 +189,7 @@ Ek paket veya internet bağlantısı gerektirmeden mevcut 40 soruluk bankadan ra
 python practice.py                 # 5 soru, ipuçları gizli
 python practice.py --count 3 --seed 42  # aynı soruları tekrar üret
 python practice.py --count 3 --show-notes  # beklenen cevap ve ipuçlarını göster
+python practice.py --count 3 --seed 42 --exclude 1,2,5  # bu soruları atla
 python -m unittest -v test_practice.py
 ```
 
