@@ -41,6 +41,32 @@ class PracticeTests(unittest.TestCase):
                 main(["--count", "41"])
         self.assertEqual(caught.exception.code, 2)
 
+    def test_excluded_questions_are_not_selected_and_seed_is_repeatable(self):
+        output = io.StringIO()
+        args = ["--count", "37", "--seed", "42", "--exclude", "1, 2,3"]
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(main(args), 0)
+        first = output.getvalue()
+        for number in (1, 2, 3):
+            self.assertNotIn(f"\\n{number}. ", first)
+        self.assertEqual(len([line for line in first.splitlines() if line.strip()]), 37)
+        with contextlib.redirect_stdout(io.StringIO()) as repeated:
+            main(args)
+        self.assertEqual(first, repeated.getvalue())
+
+    def test_invalid_exclusions_are_rejected(self):
+        for value in ("1,,2", "abc", "0", "41"):
+            with self.subTest(value=value), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as caught:
+                    main(["--count", "1", "--exclude", value])
+                self.assertEqual(caught.exception.code, 2)
+
+    def test_count_cannot_exceed_remaining_questions(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as caught:
+                main(["--count", "39", "--exclude", "1,2"])
+        self.assertEqual(caught.exception.code, 2)
+
     def test_parser_handles_custom_bank(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "questions.md"
