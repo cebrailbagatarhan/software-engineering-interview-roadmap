@@ -32,10 +32,22 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Practice random interview questions offline")
     parser.add_argument("--count", type=int, default=5, help="Number of questions (default: 5)")
     parser.add_argument("--seed", type=int, help="Repeatable selection seed")
+    parser.add_argument("--exclude", default="", help="Comma-separated question numbers to skip (e.g. 1,2,5)")
     parser.add_argument("--show-notes", action="store_true", help="Show coaching notes/expected answers")
     args = parser.parse_args(argv)
     try:
-        questions = select_questions(load_questions(), args.count, args.seed)
+        bank = load_questions()
+        excluded = set()
+        if args.exclude:
+            parts = [part.strip() for part in args.exclude.split(",")]
+            if not all(re.fullmatch(r"[0-9]+", part) for part in parts):
+                raise ValueError("--exclude requires comma-separated question numbers")
+            excluded = {int(part) for part in parts}
+            unknown = excluded - {number for number, _, _ in bank}
+            if unknown:
+                raise ValueError(f"Unknown question numbers: {', '.join(map(str, sorted(unknown)))}")
+        eligible = [question for question in bank if question[0] not in excluded]
+        questions = select_questions(eligible, args.count, args.seed)
     except (OSError, ValueError) as error:
         parser.error(str(error))
     for number, title, notes in questions:
