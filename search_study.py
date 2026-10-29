@@ -1,6 +1,7 @@
 """Search checked-in daily study package titles and optionally their contents."""
 
 import argparse
+from datetime import date
 import json
 import re
 import unicodedata
@@ -17,16 +18,26 @@ def normalized(value: str) -> str:
     return unicodedata.normalize("NFC", value).replace("İ", "i").replace("I", "ı").casefold()
 
 
-def search_packages(root: Path, query: str, limit: int = 20, full_text: bool = False) -> list[dict[str, str]]:
+def search_packages(root: Path, query: str, limit: int = 20, full_text: bool = False,
+                    since: date | None = None, until: date | None = None) -> list[dict[str, str]]:
     if not query.strip():
         raise ValueError("Search query cannot be empty")
     if limit < 1:
         raise ValueError("Limit must be positive")
+    if since and until and since > until:
+        raise ValueError("--since must not be after --until")
     needle = normalized(query.strip())
     results = []
     for path in sorted(root.glob("*/*.md"), reverse=True):
         if not DATE.fullmatch(path.parent.name) or not HOUR.fullmatch(path.name):
             continue
+        if since or until:
+            try:
+                day = date.fromisoformat(path.parent.name)
+            except ValueError:
+                continue
+            if (since and day < since) or (until and day > until):
+                continue
         content = path.read_text(encoding="utf-8")
         matches = list(PACKAGE.finditer(content))
         for index, match in enumerate(matches):
@@ -46,10 +57,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=ROOT, help="Daily archive directory")
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument("--full-text", action="store_true", help="Search package bodies as well as titles")
+    parser.add_argument("--since", type=date.fromisoformat, help="Inclusive start date (YYYY-MM-DD)")
+    parser.add_argument("--until", type=date.fromisoformat, help="Inclusive end date (YYYY-MM-DD)")
     parser.add_argument("--json", action="store_true", help="Print JSON results")
     args = parser.parse_args(argv)
     try:
-        results = search_packages(args.root, args.query, args.limit, args.full_text)
+        results = search_packages(args.root, args.query, args.limit, args.full_text, args.since, args.until)
     except (OSError, UnicodeError, ValueError) as error:
         parser.error(str(error))
     if args.json:

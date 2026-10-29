@@ -41,6 +41,30 @@ class StudySearchTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "positive"):
             search_packages(self.root, "a", limit=0)
 
+    def test_inclusive_date_range_filters_results(self):
+        from datetime import date
+        self.assertEqual(
+            search_packages(self.root, "a", since=date(2026, 9, 23), until=date(2026, 9, 23))[0]["date"],
+            "2026-09-23",
+        )
+        self.assertEqual(search_packages(self.root, "indeks", since=date(2026, 9, 23)), [])
+        self.assertEqual(search_packages(self.root, "Ağlar", until=date(2026, 9, 22)), [])
+
+    def test_invalid_date_range_rejected(self):
+        from datetime import date
+        with self.assertRaisesRegex(ValueError, "--since"):
+            search_packages(self.root, "a", since=date(2026, 9, 24), until=date(2026, 9, 22))
+
+    def test_cli_date_filters_and_invalid_date(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(main(["indeks", "--root", str(self.root), "--since", "2026-09-23", "--json"]), 0)
+        self.assertEqual(json.loads(output.getvalue()), [])
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as error:
+                main(["indeks", "--root", str(self.root), "--since", "not-a-date"])
+        self.assertEqual(error.exception.code, 2)
+
     def test_json_cli(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
