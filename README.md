@@ -193,3 +193,15 @@ python -m unittest -v test_practice.py
 ```
 
 Sorular `questions/high-yield/01-foundations-networking-backend.md` dosyasından okunur. `--count` 1–40 arasında olmalıdır. Eğitim notları varsayılan olarak gizlidir; `--show-notes` ile açılır.
+
+## Günlük çalışma arşivinde tarih aralığıyla arama
+
+Arama sonuçlarını belirli günlerle sınırlandırmak için `--since` ve `--until`
+(YYYY-MM-DD, iki uç da dahil) kullanılabilir. Bu seçenekler başlık ve
+`--full-text` aramasıyla birlikte çalışır; hiçbir çalışma notunu değiştirmez.
+
+```bash
+python search_study.py "ext4" --since 2026-09-20 --until 2026-09-23 --full-text
+python search_study.py "İşletim" --since 2026-09-20 --json
+python -m unittest -v test_search_study.py
+```
